@@ -12,10 +12,21 @@ const Login = (props) => {
   const [formIsValid, setFormIsValid] = useState(false);
 
   //useEffect with dipendences
+  // we  are introduce concept of debaouncing , with the clean up function
+  //we set  timer for the user Input to finsh or pose typing with setTimeOUt then
+  //we return clean up function to clean the previous timer and set up new timer by clearTimeout
+  // best example is when we send http request to fetch data  clean up function help us from sending multiple request it  a time
   useEffect(() => {
-    setFormIsValid(
-      enteredEmail.includes("@") && enteredPassword.trim().length > 6
-    );
+    const Identifier = setTimeout(() => {
+      console.log("cheking Form Validity");
+      setFormIsValid(
+        enteredEmail.includes("@") && enteredPassword.trim().length > 6
+      );
+    }, 500);
+    return () => {
+      console.log("CLEANUP");
+      clearTimeout(Identifier);
+    };
   }, [enteredEmail, enteredPassword]); //when ever one of the dependencies or both changed the the call back function run other with it dosent
 
   const emailChangeHandler = (event) => {
