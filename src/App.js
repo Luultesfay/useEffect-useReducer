@@ -62,6 +62,9 @@ import MainHeader from "./components/MainHeader/MainHeader";
                and returns the object passed via value prop of Context.Provider.
 
   
+    CONTEXT limitation
+    - not useful for high frequently change states,its good for app wide applications not enterprise wide Aplication
+    -use Props for component configeration and context for state management
  */
 
 function App() {
@@ -69,7 +72,7 @@ function App() {
   const userLoggedValue = localStorage.getItem("isLoggedIn"); //1
   useEffect(() => {
     if (userLoggedValue === "1") setIsLoggedIn(true);
-  }, []);
+  }, [userLoggedValue]);
   const loginHandler = (email, password) => {
     // We should of course check email and password
     // But it's just a dummy/ demo anyways
@@ -82,7 +85,7 @@ function App() {
     localStorage.removeItem("isLoggedIn");
     setIsLoggedIn(false);
   };
-
+  //{/*onLogout passes a funtion logoutHandler */}
   return (
     <AuthContext.Provider
       value={{ isLoggedIn: isLoggedIn, onLogout: logoutHandler }}
