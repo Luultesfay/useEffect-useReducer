@@ -23,7 +23,9 @@ const Login = (props) => {
         enteredEmail.includes("@") && enteredPassword.trim().length > 6
       );
     }, 500);
+    //use effect returns a clean up function
     return () => {
+      //this is clean up function  runs before the effect function and clean it up, but  the function in the effect runs first for very first time  after that the clean up function runs before the effect function
       console.log("CLEANUP");
       clearTimeout(Identifier);
     };
