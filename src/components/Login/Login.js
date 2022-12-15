@@ -17,7 +17,7 @@ const emailReducerFn = (state, action) => {
 
 const PasswordReducerFn = (state, action) => {
   if (action.type === "PASS_INPUT") {
-    return { value: action.value, isValid: action.val.trim().length > 6 };
+    return { value: action.val, isValid: action.val.trim().length > 6 };
   }
 
   if (action.type === " ON_BLUR_PASS") {
