@@ -1,27 +1,49 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
 
+const emailReducerFn = (state, action) => {
+  if (action.type === "EMAIL-INPUT") {
+    return { value: action.val, isValid: action.val.includes("@") };
+  }
+
+  if (action.type === "ON_BLUR") {
+    return { value: state.val, isValid: state.value.includes("@") };
+  }
+  return { value: "", isValid: false };
+};
+
+const PasswordReducerFn = (state, action) => {
+  if (action.type === "PASS_INPUT") {
+    return { value: action.value, isValid: action.val.trim().length > 6 };
+  }
+
+  if (action.type === " ON_BLUR_PASS") {
+    return { value: state.value, isValid: state.value.trim().length > 6 };
+  }
+  return { value: "", isValid: false };
+};
 const Login = (props) => {
-  const [enteredEmail, setEnteredEmail] = useState("");
-  const [emailIsValid, setEmailIsValid] = useState();
-  const [enteredPassword, setEnteredPassword] = useState("");
-  const [passwordIsValid, setPasswordIsValid] = useState();
   const [formIsValid, setFormIsValid] = useState(false);
 
-  //useEffect with dipendences
-  // we  are introduce concept of debaouncing , with the clean up function
-  //we set  timer for the user Input to finsh or pose typing with setTimeOUt then
-  //we return clean up function to clean the previous timer and set up new timer by clearTimeout
-  // best example is when we send http request to fetch data  clean up function help us from sending multiple request it  a time
+  const [emailState, emailDispatcherFn] = useReducer(emailReducerFn, {
+    value: "",
+    isValid: null,
+  });
+  const [passwordState, passwordDispatcherFn] = useReducer(PasswordReducerFn, {
+    value: "",
+    isValid: null,
+  });
+  console.log(emailState, passwordState);
+  const { isValid: emailIsValid } = emailState;
+  const { isValid: passwordIsValid } = emailState;
+
   useEffect(() => {
     const Identifier = setTimeout(() => {
       console.log("cheking Form Validity");
-      setFormIsValid(
-        enteredEmail.includes("@") && enteredPassword.trim().length > 6
-      );
+      setFormIsValid(emailIsValid && passwordIsValid);
     }, 500);
     //use effect returns a clean up function
     return () => {
@@ -29,27 +51,29 @@ const Login = (props) => {
       console.log("CLEANUP");
       clearTimeout(Identifier);
     };
-  }, [enteredEmail, enteredPassword]); //when ever one of the dependencies or both changed the the call back function run other with it dosent
+  }, [emailIsValid, passwordIsValid]); //when ever one of the dependencies or both changed the the call back function run other with it dosent
 
   const emailChangeHandler = (event) => {
-    setEnteredEmail(event.target.value);
+    emailDispatcherFn({ type: "EMAIL-INPUT", val: event.target.value });
   };
 
   const passwordChangeHandler = (event) => {
-    setEnteredPassword(event.target.value);
+    passwordDispatcherFn({ type: "PASS_INPUT", val: event.target.value });
   };
 
   const validateEmailHandler = () => {
-    setEmailIsValid(enteredEmail.includes("@"));
+    emailDispatcherFn({ type: "ON_BLUR" });
   };
 
   const validatePasswordHandler = () => {
-    setPasswordIsValid(enteredPassword.trim().length > 6);
+    passwordDispatcherFn({ type: "ON_BLUR_PASS" });
   };
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(enteredEmail, enteredPassword);
+    console.log(emailState.value, passwordState.value);
+    props.onLogin(emailState.value, passwordState.value);
+    // console.log(emailState.value, passwordState.value);
   };
 
   return (
@@ -57,28 +81,28 @@ const Login = (props) => {
       <form onSubmit={submitHandler}>
         <div
           className={`${classes.control} ${
-            emailIsValid === false ? classes.invalid : ""
+            emailState.isValid === false ? classes.invalid : ""
           }`}
         >
           <label htmlFor="email">E-Mail</label>
           <input
             type="email"
             id="email"
-            value={enteredEmail}
+            value={emailState.value}
             onChange={emailChangeHandler}
             onBlur={validateEmailHandler}
           />
         </div>
         <div
           className={`${classes.control} ${
-            passwordIsValid === false ? classes.invalid : ""
+            passwordState.isValid === false ? classes.invalid : ""
           }`}
         >
           <label htmlFor="password">Password</label>
           <input
             type="password"
             id="password"
-            value={enteredPassword}
+            value={passwordState.value}
             onChange={passwordChangeHandler}
             onBlur={validatePasswordHandler}
           />
