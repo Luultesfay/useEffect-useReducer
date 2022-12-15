@@ -294,7 +294,7 @@ const Login = (props) => {
   });
 
   const { isValid: emailisValied } = emailState;
-  const { isValid: passwordisValied } = emailState;
+  const { isValid: passwordisValied } = passwordState;
   // useEffect with dipendences
   // we  are introduce concept of debaouncing , with the clean up function
   // we set  timer for the user Input to finsh or pose typing with setTimeOUt then
