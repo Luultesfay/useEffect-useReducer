@@ -36,9 +36,9 @@ const Login = (props) => {
     value: "",
     isValid: null,
   });
-  console.log(emailState, passwordState);
+
   const { isValid: emailIsValid } = emailState;
-  const { isValid: passwordIsValid } = emailState;
+  const { isValid: passwordIsValid } = passwordState;
 
   useEffect(() => {
     const Identifier = setTimeout(() => {
@@ -71,9 +71,8 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    console.log(emailState.value, passwordState.value);
+
     props.onLogin(emailState.value, passwordState.value);
-    // console.log(emailState.value, passwordState.value);
   };
 
   return (
